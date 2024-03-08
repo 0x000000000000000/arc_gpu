@@ -9,6 +9,8 @@ package atomicals
 import "C"
 import (
 	"bytes"
+	"encoding/hex"
+	"fmt"
 	"log"
 	"os"
 	"time"
@@ -16,6 +18,7 @@ import (
 	"github.com/btcsuite/btcd/wire"
 )
 
+// go build -ldflags="-L/home/mask/project/atomicals-cuda/web3-go/cuda" main.go
 func Mine(input Input, threads uint32, result chan<- Result) {
 	deviceNum := 1
 	devcieNumStr := os.Getenv("CUDA_DEVICE_NUM")
@@ -29,26 +32,40 @@ func Mine(input Input, threads uint32, result chan<- Result) {
 
 func mine(i int, input Input, threads uint32, result chan<- Result) {
 	// set different time for each goroutine
-	input.CopiedData.Args.Time += uint32(i)
-	// use uint32 so we can avoid cbor encoding at runtime
-	input.CopiedData.Args.Nonce = uint32(^uint16(0)) + 1
-	input.Init()
+	// input.CopiedData.Args.Time += uint32(i)
+	// // use uint32 so we can avoid cbor encoding at runtime
+	// input.CopiedData.Args.Nonce = uint32(^uint16(0)) + 1
+	// input.Init()
 
-	msgTx := wire.NewMsgTx(wire.TxVersion)
-	output := wire.NewOutPoint(input.FundingUtxo.Txid, input.FundingUtxo.Index)
-	txIn := wire.NewTxIn(output, nil, nil)
-	txIn.Sequence = 0
-	msgTx.AddTxIn(txIn)
+	// msgTx := wire.NewMsgTx(wire.TxVersion)
+	// output := wire.NewOutPoint(input.FundingUtxo.Txid, input.FundingUtxo.Index)
+	// txIn := wire.NewTxIn(output, nil, nil)
+	// txIn.Sequence = 0
+	// msgTx.AddTxIn(txIn)
 
-	scriptP2TR := input.MustBuildScriptP2TR()
-	txOut := wire.NewTxOut(int64(input.Fees.RevealFeePlusOutputs), scriptP2TR.Output)
-	msgTx.AddTxOut(txOut)
-	// add change utxo
-	if change := input.GetCommitChange(); change != 0 {
-		msgTx.AddTxOut(wire.NewTxOut(change, input.KeyPairInfo.Ouput))
+	// scriptP2TR := input.MustBuildScriptP2TR()
+	// txOut := wire.NewTxOut(int64(input.Fees.RevealFeePlusOutputs), scriptP2TR.Output)
+	// msgTx.AddTxOut(txOut)
+	// // add change utxo
+	// if change := input.GetCommitChange(); change != 0 {
+	// 	msgTx.AddTxOut(wire.NewTxOut(change, input.KeyPairInfo.Ouput))
+	// }
+
+	msgTx := new(wire.MsgTx)
+	by, err := hex.DecodeString("01000000011a3059f8c406e31a936cd07d7522c34ad2eb5035ee2eae65f039aa43da08bbaa010000000000000000029709000000000000225120a579cc302987845e990343cc5a60bfffdf290b45d011b16d9269cc86349385d497d7f00500000000225120b0cc121a1e5b6c2f2ea18ed079e0fd25f700490ad048c0dc9e24671f1a6a5ea600000000")
+	if err != nil {
+		fmt.Println("err0", err)
+		return
 	}
 
+	err = msgTx.Deserialize(bytes.NewBuffer(by))
+	if err != nil {
+		fmt.Println("err", err)
+		return
+	}
 	buf := bytes.NewBuffer(make([]byte, 0, msgTx.SerializeSizeStripped()))
+	txIn := msgTx.TxIn[0]
+	txOut := msgTx.TxOut[0]
 	msgTx.SerializeNoWitness(buf)
 	serializedTx := buf.Bytes()
 

@@ -25,7 +25,7 @@ func main() {
 		reporter := hashrate.NewReporter()
 		// core count
 		resultCh := make(chan atomicals.Result, 1)
-		go atomicals.Mine(input, resultCh, reporter)
+		go atomicals.Mine(input, resultCh, reporter, "")
 		result := <-resultCh
 
 		log.Printf("found solution cost: %v", time.Since(start))

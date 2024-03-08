@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"go-atomicals/pkg/atomicals"
-	"go-atomicals/pkg/hashrate"
 	"log"
 	"os"
 	"time"
@@ -12,16 +11,18 @@ import (
 func main() {
 	// read from stdin, pase it to input
 	var input atomicals.Input
-	dec := json.NewDecoder(os.Stdin)
+	data, _ := os.Open("./data.json")
+	dec := json.NewDecoder(data)
 	if dec.Decode(&input) != nil {
 		log.Fatalf("decode input error")
 	}
 
 	start := time.Now()
-	reporter := hashrate.NewReporter()
+	// reporter := hashrate.NewReporter()
 	// core count
 	result := make(chan atomicals.Result, 1)
-	go atomicals.Mine(input, result, reporter)
+
+	go atomicals.Mine(input, 1, result, "")
 	finalData := <-result
 	log.Printf("found solution cost: %v", time.Since(start))
 

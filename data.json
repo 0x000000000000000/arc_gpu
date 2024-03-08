@@ -1,0 +1,66 @@
+{
+    "copiedData": {
+        "args": {
+            "bitworkc": "aabb",
+            "bitworkr": "4d65",
+            "mint_ticker": "quark",
+            "nonce": 9999999,
+            "time": 1705918935
+        }
+    },
+    "nonceStart": 0,
+    "nonceEnd": 9999999,
+    "workerOptions": {
+        "electrumApi": {
+            "baseUrl": "http://127.0.0.1:8081/proxy",
+            "usePost": true,
+            "isOpenFlag": false
+        },
+        "satsbyte": 10,
+        "address": "bcrt1pwrxmvrxgq98zl2x9hqs87eg2w8dflvfsxz0skk0rnmgwmhtpjgeqfsznu6",
+        "opType": "dmt",
+        "dmtOptions": {
+            "mintAmount": 1000,
+            "ticker": "quark"
+        }
+    },
+    "fundingWIF": "L4cjYizvfRVpjLNjZDqTYuKD5fJugNoYkTkYFDjpw21UrL5E4JT1",
+    "fundingUtxo": {
+        "txid": "bb551f1935a7c13244165d9d45b1b2b931194ebc2a01b294f9ae1bd5089ea920",
+        "vout": 0,
+        "status": {
+            "confirmed": true,
+            "block_height": 1291,
+            "block_hash": "1ca94bad517b49ba2523afc313c1b6257c6ba3e2b75d7a6a5268fb2364313a38",
+            "block_time": 1709879351
+        },
+        "value": 100000000,
+        "index": 1
+    },
+    "fees": {
+        "commitAndRevealFee": 2920,
+        "commitAndRevealFeePlusOutputs": 102920,
+        "revealFeePlusOutputs": 101810,
+        "commitFeeOnly": 1110,
+        "revealFeeOnly": 1810
+    },
+    "performBitworkForCommitTx": true,
+    "workerBitworkInfoCommit": {
+        "input_bitwork": "000000",
+        "hex_bitwork": "000000",
+        "prefix": "aabb"
+    },
+    "scriptP2TR": null,
+    "hashLockP2TR": null,
+    "workerBitworkInfoReveal": {
+        "input_bitwork": "",
+        "hex_bitwork": "",
+        "prefix": "4d65"
+    },
+    "additionalOutputs": [
+        {
+            "address": "bc1pq9a5tkcc987mknndz5fgrsj9ateyu046v6majxnzwpkxwy2t87nqygunry",
+            "value": 100000
+        }
+    ]
+}
