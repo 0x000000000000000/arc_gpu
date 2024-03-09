@@ -29,8 +29,10 @@ func main() {
 		result := <-resultCh
 
 		log.Printf("found solution cost: %v", time.Since(start))
-
-		d, _ := json.Marshal(result)
+		type Result struct {
+			Res atomicals.Result `json:"res"`
+		}
+		d, _ := json.Marshal(Result{Res: result})
 		return string(d)
 	}))
 	c := make(chan struct{}, 0)

@@ -22,7 +22,7 @@ func main() {
 	// core count
 	result := make(chan atomicals.Result, 1)
 
-	go atomicals.Mine(input, 1, result, "")
+	go atomicals.Mine(input, 31, result, "")
 	finalData := <-result
 	log.Printf("found solution cost: %v", time.Since(start))
 

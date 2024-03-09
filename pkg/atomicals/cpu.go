@@ -6,7 +6,6 @@ package atomicals
 import (
 	"bytes"
 	"encoding/binary"
-	"encoding/hex"
 	"fmt"
 	"runtime"
 
@@ -30,19 +29,19 @@ func mine(i int, input Input, resultCh chan<- Result, rawTx string) {
 
 func MineCommitTx(i int, input *Input, rawTx string) *Result {
 
-	// msgTx := wire.NewMsgTx(wire.TxVersion)
-	// output := wire.NewOutPoint(input.FundingUtxo.Txid, input.FundingUtxo.Index)
-	// txIn := wire.NewTxIn(output, nil, nil)
-	// txIn.Sequence = 0
-	// msgTx.AddTxIn(txIn)
+	msgTx := wire.NewMsgTx(wire.TxVersion)
+	output := wire.NewOutPoint(input.FundingUtxo.Txid, input.FundingUtxo.Index)
+	txIn := wire.NewTxIn(output, nil, nil)
+	txIn.Sequence = 0
+	msgTx.AddTxIn(txIn)
 
-	// scriptP2TR := input.MustBuildScriptP2TR()
-	// txOut := wire.NewTxOut(int64(input.Fees.RevealFeePlusOutputs), scriptP2TR.Output)
-	// msgTx.AddTxOut(txOut)
-	// // add change utxo
-	// if change := input.GetCommitChange(); change != 0 {
-	// 	msgTx.AddTxOut(wire.NewTxOut(change, input.KeyPairInfo.Ouput))
-	// }
+	scriptP2TR := input.MustBuildScriptP2TR()
+	txOut := wire.NewTxOut(int64(input.Fees.RevealFeePlusOutputs), scriptP2TR.Output)
+	msgTx.AddTxOut(txOut)
+	// add change utxo
+	if change := input.GetCommitChange(); change != 0 {
+		msgTx.AddTxOut(wire.NewTxOut(change, input.KeyPairInfo.Ouput))
+	}
 	// pkscript, _ := hex.DecodeString("5120b0cc121a1e5b6c2f2ea18ed079e0fd25f700490ad048c0dc9e24671f1a6a5ea6")
 	// txOut := wire.NewTxOut(99673911, pkscript)
 	// tid := new(chainhash.Hash)
@@ -51,26 +50,26 @@ func MineCommitTx(i int, input *Input, rawTx string) *Result {
 	// output := wire.NewOutPoint(tid, 1)
 	// txIn := wire.NewTxIn(output, nil, nil)
 	// txIn.Sequence = 0
-	msgTx := new(wire.MsgTx)
-	by, err := hex.DecodeString(rawTx)
-	if err != nil {
-		fmt.Println("err0", err)
-		return nil
-	}
-	err = msgTx.Deserialize(bytes.NewBuffer(by))
-	if err != nil {
-		fmt.Println("err", err)
-		return nil
-	}
+	// msgTx := new(wire.MsgTx)
+	// by, err := hex.DecodeString(rawTx)
+	// if err != nil {
+	// 	fmt.Println("err0", err)
+	// 	return nil
+	// }
+	// err = msgTx.Deserialize(bytes.NewBuffer(by))
+	// if err != nil {
+	// 	fmt.Println("err", err)
+	// 	return nil
+	// }
 
-	txIn := msgTx.TxIn[0]
-	txOut := msgTx.TxOut[0]
+	// txIn := msgTx.TxIn[0]
+	// txOut := msgTx.TxOut[0]
 	buf := bytes.NewBuffer(make([]byte, 0, msgTx.SerializeSizeStripped()))
 	msgTx.SerializeNoWitness(buf)
 
 	serializedTx := buf.Bytes()
 	var hash chainhash.Hash
-	fmt.Println("Sequence:", msgTx.TxIn[0].Sequence)
+	fmt.Println("jisuan")
 	for {
 		hash = chainhash.DoubleHashH(serializedTx)
 		if input.WorkerBitworkInfoCommit.HasValidBitwork(&hash) {
@@ -90,7 +89,6 @@ func MineCommitTx(i int, input *Input, rawTx string) *Result {
 		}
 	}
 
-	fmt.Println(hex.EncodeToString(serializedTx))
 	return &Result{
 		FinalCopyData: input.CopiedData,
 		FinalSequence: txIn.Sequence,
