@@ -256,7 +256,7 @@ extern "C"
 {
 
 uint32_t scanhash_sha256d(int thr_id, BYTE* in, WORD inlen, BYTE *target, WORD target_len, char prefix_parital, char ext, WORD threads, WORD start_seq, WORD *hashes_done) {
-
+	cudaSetDevice(thr_id);
 	CUDA_SAFE_CALL(cudaMalloc(&d_resNonces[thr_id], sizeof(uint32_t)));
 	CUDA_SAFE_CALL(cudaMemset(d_resNonces[thr_id], 0xFF, sizeof(uint32_t)));
 	CUDA_SAFE_CALL(cudaMemcpyToSymbol(d_data, in, inlen, 0, cudaMemcpyHostToDevice));
