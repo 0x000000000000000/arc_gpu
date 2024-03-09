@@ -36,7 +36,7 @@ func main() {
 			log.Fatalf("decode input error")
 		}
 
-		go atomicals.Mine(input, 31, result, "")
+		go atomicals.Mine(input, 20, result, "")
 		// go atomicals.Mine(input, result)
 		finalData := <-result
 		log.Printf("found solution cost: %v", time.Since(start))
